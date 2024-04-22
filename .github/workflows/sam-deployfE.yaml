@@ -1,0 +1,29 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main  # Or your default branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secret.AWS_SECRET_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secret.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1  # Your AWS region
+
+    - name: Deploy to S3
+      run: |
+        aws s3 sync C:\\Users\\samee\\OneDrive\\Documents\\GitHub\\aws-cloud-resume-challenge s3://resume-sameera
+
+    - name: Invalidate CloudFront distribution
+      run: |
+        aws cloudfront create-invalidation --distribution-id your-distribution-id --paths "/*"
